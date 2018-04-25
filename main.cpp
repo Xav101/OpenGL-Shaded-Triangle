@@ -7,19 +7,24 @@
 unsigned int WINDOW_WIDTH = 800;
 unsigned int WINDOW_HEIGHT = 600;
 unsigned int VBO;
+const double pi = 3.1415926535897;
+
+float vert_1_color[3];
+float vert_2_color[3];
+float vert_3_color[3];
 
 //create an array of verticies and colors for the triangle
 float triangle_1_vert[] = {
-	//verticies         //colors
-	-0.5f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
-	 0.5f, 0.0f, 0.0f,   0.9961f, 0.0039f, 0.9961f,
-	 0.0f, 0.5f, 0.0f,   0.0039, 0.9961f, 1.0f
+	//verticies     	//colors
+	-0.5f, 0.0f, 0.0f,   0.9451f, 0.9569f, 0.0078f,
+	0.5f, 0.0f, 0.0f,   0.9961f, 0.0039f, 0.9961f,
+	0.0f, 0.5f, 0.0f,   0.0039, 0.9961f, 1.0f
 };
 
 //create an array for indicies
 //unsigned int indicies[] = {
-//	0, 1, 3, //first triangle
-//	2, 3, 1 //second triangle
+//    0, 1, 3, //first triangle
+//    2, 3, 1 //second triangle
 //};
 
 //create the vertex shader
@@ -28,8 +33,8 @@ const char *vertexShaderSource = "#version 450 core\n"
 "layout (location = 1) in vec3 aColor;\n"
 "out vec3 triangleColor;\n"
 "void main() {\n"
-	"gl_Position = vec4(aPos, 1.0);\n"
-	"triangleColor = aColor;\n"
+"gl_Position = vec4(aPos, 1.0);\n"
+"triangleColor = aColor;\n"
 "}";
 
 //create the fragment shader
@@ -37,7 +42,7 @@ const char *fragentShaderSource = "#version 450 core\n"
 "out vec4 FragColor;\n"
 "in vec3 triangleColor;\n"
 "void main() {\n"
-	"FragColor = vec4(triangleColor, 1.0);\n"
+"FragColor = vec4(triangleColor, 1.0);\n"
 "}";
 
 //function to resize the viewport if the window is resized
@@ -123,7 +128,7 @@ int main() {
 	//delete the shader programs to free up some space
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
-	
+
 	//create a vertex array object
 	unsigned int VAO;
 	glGenVertexArrays(1, &VAO);
@@ -144,7 +149,7 @@ int main() {
 	//glGenBuffers(1, &EBO);
 	//copy elements into a buffer
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies),	 indicies, GL_STATIC_DRAW);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), indicies, GL_STATIC_DRAW);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -159,11 +164,23 @@ int main() {
 		//run the shader program
 		glUseProgram(shaderProgram);
 		//update the triangle color
-		float newColor[] = {
-			0.9451f, 0.9569f, 0.0078f
-		};
+		float time = glfwGetTime();
 
-		glBufferSubData(GL_ARRAY_BUFFER, 3 * sizeof(float), 3 * sizeof(float), newColor);
+		vert_1_color[0] = (sin(time) + 1) / 2;
+		vert_1_color[1] = (sin(time + (2 * (pi / 9)) + 1)) / 2;
+		vert_1_color[1] = (sin(time + (4 * (pi / 9)) + 1)) / 2;
+
+		vert_2_color[0] = (sin(time + (3 * ((2 * pi) / 9))) + 1) / 2;
+		vert_2_color[1] = (sin(time + (4 * ((2 * pi) / 9))) + 1) / 2;
+		vert_2_color[2] = (sin(time + (5 * ((2 * pi) / 9))) + 1) / 2;
+
+		vert_3_color[0] = (sin(time + (6 * ((2 * pi) / 9))) + 1) / 2;
+		vert_3_color[1] = (sin(time + (7 * ((2 * pi) / 9))) + 1) / 2;
+		vert_3_color[2] = (sin(time + (8 * ((2 * pi) / 9))) + 1) / 2;
+
+		glBufferSubData(GL_ARRAY_BUFFER, 3 * sizeof(float), 3 * sizeof(float), vert_1_color);
+		glBufferSubData(GL_ARRAY_BUFFER, 9 * sizeof(float), 3 * sizeof(float), vert_2_color);
+		glBufferSubData(GL_ARRAY_BUFFER, 15 * sizeof(float), 3 * sizeof(float), vert_3_color);
 
 		//int vertexColorLocation = glGetUniformLocation(shaderProgram, "triangleColor");
 		//glUniform4f(vertexColorLocation, 0.0f, greenColor, 0.0f, 1.0f);
